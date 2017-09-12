@@ -2,7 +2,7 @@ package CSD207.Assignment2;
 
 import java.util.Scanner;
 
-/**
+/*
  * Created by gautam on 24/08/17.
  */
 

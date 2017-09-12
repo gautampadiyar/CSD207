@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -74,18 +75,34 @@ public class QuestionAnswer {
 
     public int generateQuestions(int n) throws IOException {
 
-        if(n > this.questions.size())
-            System.out.format("Only %d questions available\n", this.questions.size());
+        int size = this.questions.size();
+        if(n > size)
+            System.out.format("Only %d questions available\n", size);
 
-        int i=0, c;
-        for (Question q: this.questions) {
-            System.out.format("Q%d : ", i+1);
+        int c;
+        Question q;
+
+        for(int j=0; j<n; j++){
+            int x = randInt(0, size);
+            q = this.questions.get(x);
+            System.out.format("Q%d : ", j+1);
             q.ask();
             c = q.getAnswer(sc);
             if(q.checkAnswer(c))
                 score++;
         }
         return score;
+    }
+
+    public int randInt(int min, int max) {
+
+        Random rand = new Random();
+
+        // nextInt is normally exclusive of the top value,
+        // so add 1 to make it inclusive
+        int randomNum = rand.nextInt((max - min)) + min;
+
+        return randomNum;
     }
 
     public void initQuestions(int n) throws IOException {
@@ -112,6 +129,7 @@ public class QuestionAnswer {
     public void deleteQuestion(int a){
         this.questions.remove(a);
     }
+
 
     class Question{
         String question;
@@ -165,7 +183,6 @@ public class QuestionAnswer {
         public void setQuestion(String q){
             this.question = q;
         }
-
 
     }
 
