@@ -16,16 +16,51 @@ public class BillGeneration {
 
     static ArrayList<Category> categoryList = new ArrayList<>();
     static HashMap<Integer, Item> allItems = new HashMap<>();
-    ArrayList<Customer> customerList = new ArrayList<>();
 
     public static void main(String args[]) throws IOException {
-        takeInputsForItems();
-        viewAllItems();
-        populateAllItems();
 
+        BufferedReader sc = new BufferedReader(new InputStreamReader(System.in));
+        int c = 1;
+
+        do {
+            if (categoryList.size() > 0) {
+                switch (c) {
+                    case 2:
+                        System.out.print("Enter your id : ");
+                        String id = sc.readLine();
+                        if (!Customer.isNewCustomer(id))
+                            System.out.println("Sorry, ID not found");
+                        else {
+                            Customer cust = Customer.getCustomer(id);
+                            cust.bills.add(goToCart());
+                            cust.showHistory();
+                        }
+
+                        goToCart();
+                    case 1:
+                        System.out.print("Enter your name : ");
+                        String name = sc.readLine();
+                        Customer temp = new Customer(name);
+                        System.out.println("Your ID is " + temp.uid);
+                        temp.bills.add(goToCart());
+                }
+            }
+
+            takeInputsForItems();
+            viewAllItems();
+            populateAllItems();
+            System.out.println("Are you a new customer?");
+            System.out.println("1. yes");
+            System.out.println("2. no");
+            c = Integer.valueOf(sc.readLine());
+        }while(c == 1);
+
+
+    }
+
+    public static Bill goToCart() throws IOException{
         System.out.println("What would you like to buy?");
         System.out.println("Enter item number and number of units");
-
 
         //Item item = allItems.get(id);
 
@@ -33,7 +68,7 @@ public class BillGeneration {
         b.populateCart();
         b.displayBill();
         b.calculateBill();
-
+        return b;
     }
 
     public static void takeInputsForItems() throws IOException {
@@ -89,8 +124,6 @@ public class BillGeneration {
             }
         }
     }
-
-
 }
 
 class Bill{
@@ -152,10 +185,47 @@ class Bill{
 }
 
 class Customer{
-    UUID uid;
+    String uid;
     String name;
     ArrayList<Bill> bills = new ArrayList<>();
     // list of all past bills
+
+    static HashMap<String, Customer> customers = new HashMap<>();
+
+    Customer(){
+
+    }
+
+    Customer(String name){
+        this.name = name;
+        generateId();
+    }
+
+    public void showHistory(){
+        System.out.println("Customer name : "+ this.name);
+        System.out.println("Customer id : "+ this.uid);
+        int i=1;
+        for(Bill b: bills) {
+            System.out.println("Bill "+i);
+            b.displayBill();
+            i++;
+        }
+
+    }
+
+    public void generateId(){
+        this.uid = UUID.randomUUID().toString();
+    }
+
+    public static boolean isNewCustomer(String id){
+        if(customers.containsKey(id))
+            return true;
+        else return false;
+    }
+
+    public static Customer getCustomer(String id){
+        return customers.get(id);
+    }
 }
 
 class Category{
